@@ -1,0 +1,69 @@
+name: update
+
+# The formula is updated here rather than pushed from the litmus repository.
+# A push from there would need a token with write access to this one, and a
+# long-lived credential stored in another repository is a worse thing to own
+# than a few minutes of delay. Releases are public, so this side needs no
+# secret at all: GitHub's own token can write to the repository it runs in.
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Point the formula at the latest release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository_owner }}/litmus
+        run: |
+          set -euo pipefail
+
+          TAG=$(gh release view --repo "$REPO" --json tagName -q .tagName)
+          ASSET=$(gh release view --repo "$REPO" --json assets \
+                    -q '.assets[].name | select(endswith(".tar.gz"))' | head -1)
+
+          if [ -z "$ASSET" ]; then
+            echo "::notice::$TAG has no binary yet — leaving the formula alone"
+            exit 0
+          fi
+
+          URL="https://github.com/$REPO/releases/download/$TAG/$ASSET"
+          SHA=$(curl -sL "$URL" | shasum -a 256 | cut -d' ' -f1)
+
+          cat > Formula/litmus.rb <<EOF
+          class Litmus < Formula
+            desc "Mutation testing for Swift"
+            homepage "https://github.com/$REPO"
+            url "$URL"
+            sha256 "$SHA"
+            license "MIT"
+            version "${TAG#v}"
+            head "https://github.com/$REPO.git", branch: "main"
+
+            depends_on :macos
+
+            def install
+              bin.install "litmus"
+            end
+
+            test do
+              assert_match "Mutation testing for Swift", shell_output("#{bin}/litmus --help")
+              assert_match version.to_s, shell_output("#{bin}/litmus --version")
+            end
+          end
+          EOF
+
+          git config user.name "litmus tap"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Formula/litmus.rb
+          git diff --cached --quiet && { echo "already current"; exit 0; }
+          git commit -m "litmus $TAG"
+          git push
