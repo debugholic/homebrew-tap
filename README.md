@@ -2,8 +2,13 @@
 
 ```
 brew tap debugholic/tap
+brew trust debugholic/tap
 brew install litmus
 ```
+
+Homebrew asks you to trust a third-party tap before it will load a formula
+from it, because installing one runs its code. `brew trust --formula
+debugholic/tap/litmus` narrows that to this formula alone.
 
 ## litmus
 
