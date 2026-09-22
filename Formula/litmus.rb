@@ -1,20 +1,20 @@
 class Litmus < Formula
   desc "Mutation testing for Swift"
   homepage "https://github.com/debugholic/litmus"
-  url "https://github.com/debugholic/litmus/archive/refs/tags/v0.1.0.tar.gz"
-  sha256 "b4c9757f4a1be83df2640d4baef6921145fba03cf75528c47024bab826bc314e"
+  url "https://github.com/debugholic/litmus/releases/download/v0.1.2/litmus-v0.1.2-macos-universal.tar.gz"
+  sha256 "55cf7fe344a8736218200331b6ef081fd611a9c73d8328eb0c2659fa2414d090"
   license "MIT"
+  version "0.1.2"
   head "https://github.com/debugholic/litmus.git", branch: "main"
 
-  depends_on xcode: ["15.0", :build]
   depends_on :macos
 
   def install
-    system "swift", "build", "--disable-sandbox", "-c", "release"
-    bin.install ".build/release/litmus"
+    bin.install "litmus"
   end
 
   test do
     assert_match "Mutation testing for Swift", shell_output("#{bin}/litmus --help")
+    assert_match version.to_s, shell_output("#{bin}/litmus --version")
   end
 end
