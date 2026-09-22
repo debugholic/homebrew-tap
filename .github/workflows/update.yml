@@ -1,10 +1,10 @@
 name: update
 
 # The formula is updated here rather than pushed from the litmus repository.
-# A push from there would need a token with write access to this one, and a
-# long-lived credential stored in another repository is a worse thing to own
-# than a few minutes of delay. Releases are public, so this side needs no
-# secret at all: GitHub's own token can write to the repository it runs in.
+# A push from there needs a token with write access to this one, and a
+# long-lived credential parked in another repository is a worse thing to own
+# than half an hour of delay. Releases are public, so this side needs no
+# secret: the token GitHub hands a workflow can write to its own repository.
 on:
   schedule:
     - cron: "*/30 * * * *"
@@ -30,13 +30,16 @@ jobs:
           ASSET=$(gh release view --repo "$REPO" --json assets \
                     -q '.assets[].name | select(endswith(".tar.gz"))' | head -1)
 
+          # A release whose binary is still building, or one that never got
+          # one. Leaving the formula alone keeps the last good version
+          # installable instead of pointing at a URL that 404s.
           if [ -z "$ASSET" ]; then
             echo "::notice::$TAG has no binary yet — leaving the formula alone"
             exit 0
           fi
 
           URL="https://github.com/$REPO/releases/download/$TAG/$ASSET"
-          SHA=$(curl -sL "$URL" | shasum -a 256 | cut -d' ' -f1)
+          SHA=$(curl -fsSL "$URL" | shasum -a 256 | cut -d' ' -f1)
 
           cat > Formula/litmus.rb <<EOF
           class Litmus < Formula
@@ -61,9 +64,9 @@ jobs:
           end
           EOF
 
-          git config user.name "litmus tap"
+          git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add Formula/litmus.rb
-          git diff --cached --quiet && { echo "already current"; exit 0; }
-          git commit -m "litmus $TAG"
+          git diff --cached --quiet && { echo "already at $TAG"; exit 0; }
+          git commit -m "chore: litmus $TAG로 갱신합니다."
           git push
