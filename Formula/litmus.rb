@@ -1,10 +1,10 @@
 class Litmus < Formula
   desc "Mutation testing for Swift"
   homepage "https://github.com/debugholic/litmus"
-  url "https://github.com/debugholic/litmus/releases/download/v0.2.0/litmus-v0.2.0-macos-universal.tar.gz"
-  sha256 "e95b06827edf01ced2b2a5bcbe61e86aaee8cb54349a48fb7c629bf8c1013e14"
+  url "https://github.com/debugholic/litmus/releases/download/v0.3.0/litmus-v0.3.0-macos-universal.tar.gz"
+  sha256 "fd56ec76b7e587a0dd33f63e01bb9b80d01e1ec9b1023383dde12655f3415f93"
   license "MIT"
-  version "0.2.0"
+  version "0.3.0"
   head "https://github.com/debugholic/litmus.git", branch: "main"
 
   depends_on :macos
