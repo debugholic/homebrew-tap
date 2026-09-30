@@ -12,8 +12,9 @@ debugholic/tap/litmus` narrows that to this formula alone.
 
 ## litmus
 
-Mutation testing for Swift — changes your code on purpose and checks whether
-your tests fail. See [debugholic/litmus](https://github.com/debugholic/litmus).
+Mutation testing and flaky test detection for Swift — changes your code on
+purpose and checks whether your tests fail, and reruns your tests to find the
+ones whose result changes. See [debugholic/litmus](https://github.com/debugholic/litmus).
 
 Built from source on install, so the first one takes a few minutes: SwiftSyntax
 is a large dependency and this compiles it.
