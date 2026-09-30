@@ -41,9 +41,12 @@ jobs:
           URL="https://github.com/$REPO/releases/download/$TAG/$ASSET"
           SHA=$(curl -fsSL "$URL" | shasum -a 256 | cut -d' ' -f1)
 
+          # The test reads only as far as "Mutation testing": --help's first
+          # line grew "and flaky test detection" in 0.4.0, and a formula this
+          # writes for an older release has to pass as well.
           cat > Formula/litmus.rb <<EOF
           class Litmus < Formula
-            desc "Mutation testing for Swift"
+            desc "Mutation testing and flaky test detection for Swift"
             homepage "https://github.com/$REPO"
             url "$URL"
             sha256 "$SHA"
@@ -58,7 +61,7 @@ jobs:
             end
 
             test do
-              assert_match "Mutation testing for Swift", shell_output("#{bin}/litmus --help")
+              assert_match "Mutation testing", shell_output("#{bin}/litmus --help")
               assert_match version.to_s, shell_output("#{bin}/litmus --version")
             end
           end
@@ -68,5 +71,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add Formula/litmus.rb
           git diff --cached --quiet && { echo "already at $TAG"; exit 0; }
-          git commit -m "chore: litmus $TAG로 갱신합니다."
+          git commit -m "chore: update litmus to $TAG"
           git push
