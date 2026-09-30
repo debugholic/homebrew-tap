@@ -16,5 +16,5 @@ Mutation testing and flaky test detection for Swift — changes your code on
 purpose and checks whether your tests fail, and reruns your tests to find the
 ones whose result changes. See [debugholic/litmus](https://github.com/debugholic/litmus).
 
-Built from source on install, so the first one takes a few minutes: SwiftSyntax
-is a large dependency and this compiles it.
+Installs the universal binary, for Apple silicon and Intel, attached to the
+latest release: nothing is compiled on your machine.
