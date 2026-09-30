@@ -1,10 +1,10 @@
 class Litmus < Formula
   desc "Mutation testing and flaky test detection for Swift"
   homepage "https://github.com/debugholic/litmus"
-  url "https://github.com/debugholic/litmus/releases/download/v0.3.1/litmus-v0.3.1-macos-universal.tar.gz"
-  sha256 "0ca80948d75901575d2880d58d6b65c504f73ad12b839039f40c5efed7e686f5"
+  url "https://github.com/debugholic/litmus/releases/download/v0.4.0/litmus-v0.4.0-macos-universal.tar.gz"
+  sha256 "ab48b3f1e2fba9eed3770965550fc9a5f2385d81c65f31ae1ae1120fc5133c77"
   license "MIT"
-  version "0.3.1"
+  version "0.4.0"
   head "https://github.com/debugholic/litmus.git", branch: "main"
 
   depends_on :macos
